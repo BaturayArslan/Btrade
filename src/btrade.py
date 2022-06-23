@@ -98,7 +98,8 @@ def usdt_to_lot(client, pair, lev, usdt):
 
 def main():
     try:
-        Parser().parse()
+        arguments = sys.argv[1:]
+        Parser().parse(arguments)
 
         STOP_TRESHHOLD = -15
         PROFIT_TRESHHOLD = 27

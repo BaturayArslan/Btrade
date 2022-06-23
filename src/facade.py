@@ -2,7 +2,7 @@ from configs import Configs
 from typing import Type
 
 
-class Singleton:
+class Singleton(type):
     def __call__(cls_, *args, **kwargs):
         if not cls_.has_instance():
             cls_.instance = super(Singleton, cls_).__call__(*args, **kwargs)
@@ -14,4 +14,4 @@ class Singleton:
 
 class Facade(metaclass=Singleton):
     def __init__(self):
-        self.secrets: Type[Configs] = Configs()
+        self.settings: Type[Configs] = Configs()

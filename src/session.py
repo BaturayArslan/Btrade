@@ -11,7 +11,7 @@ class Session:
             exchange="",
             key="",
             secret="",
-            passpharase=""
+            passphrase=""
         )
 
     def update(self, options):

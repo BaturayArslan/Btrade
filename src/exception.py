@@ -16,3 +16,11 @@ class BadArgumentValue(Exception):
 
 class BadFilePath(Exception):
     pass
+
+
+class BadConfigOptions(Exception):
+    pass
+
+
+class MissingArgument(Exception):
+    pass

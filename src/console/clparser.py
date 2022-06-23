@@ -17,7 +17,7 @@ import warnings
 from collections import defaultdict
 
 from requests import options
-from exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath
+from exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath, MissingArgument
 from session import Session
 from facade import Facade
 
@@ -32,16 +32,16 @@ class Parser:
     def __init__(self) -> None:
         pass
 
-    def parse(self):
+    def parse(self, arguments):
         try:
-            arguments = sys.argv[1:]
             options, _ = getopt.getopt(
                 arguments, ACCEPTED_SHORT_OPTIONS, ACCEPTED_LONG_OPTIONS)
 
             session = Session()
             self._validate(options, session)
-            Facade().secrets
-
+            session.update(self._get_configs(options))
+            return session
+            
         except getopt.GetoptError as error:
             raise error
         except (BadArgumentNumber, BadArgumentType) as error:
@@ -69,19 +69,17 @@ class Parser:
                     else:
                         raise BadArgumentValue(
                             "You Have Entered Bad Unacceptable Argment value.")
-                elif option == "-f":
-                    if self._check_path(value):
-                        pass
-                    else:
-                        raise BadFilePath("File does not Exist.")
             except Exception as e:
                 raise e
         session.update(new_options)
 
-    def _check_path(self, path: str) -> str:
-        if path.startswith("/"):
-            return os.path.isfile(path)
-        else:
-            current_directory = os.getcwd()
-            absolute_path = os.path.join(current_directory, path)
-            return absolute_path
+    def _get_configs(self, options: List[Tuple[str, Union[str, int]]]) -> Dict:
+        file_name = [option[1] for option in options if option[0] == "-f"]
+        if not file_name:
+            raise MissingArgument("You Have to provide -f argument.")
+        Facade().settings.set_file_path(file_name[0])
+        section = Facade().settings.get_section("secrets")
+        configs = {}
+        for key, value in section:
+            configs[key] = value
+        return configs
