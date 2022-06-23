@@ -16,3 +16,6 @@ class Session:
 
     def update(self, options):
         self._options.update(options)
+
+    def __getitem__(self, item):
+        return self._options[item]

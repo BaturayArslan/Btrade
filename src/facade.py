@@ -13,5 +13,6 @@ class Singleton(type):
 
 
 class Facade(metaclass=Singleton):
+
     def __init__(self):
         self.settings: Type[Configs] = Configs()

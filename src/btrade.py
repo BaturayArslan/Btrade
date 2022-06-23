@@ -1,5 +1,6 @@
 # https://pypi.org/project/pandas/
 from logging import exception
+import pdb
 from shutil import ExecError
 import sys
 import json
@@ -96,21 +97,21 @@ def usdt_to_lot(client, pair, lev, usdt):
     return int(lotQnt)
 
 
+def import_wrapper(exchange: str):
+    module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
+    return getattr(module, f"{exchange.capitalize()}")
+
+
 def main():
     try:
         arguments = sys.argv[1:]
-        Parser().parse(arguments)
+        session = Parser().parse(arguments)
+        Exchange = import_wrapper(session["exchange"])
+        exchange = Exchange(session)
 
-        STOP_TRESHHOLD = -15
-        PROFIT_TRESHHOLD = 27
-        pair = "XBTUSDTM"
-        lev = 20
         with open("/var/www/webhook/event.txt", "r") as file:
             event = file.read()
         event = json.loads(event)
-        key = "62865e7b3d6fab000179c8e2"
-        secret = "68fa660a-a83b-474d-9275-703402920ffa"
-        passPharase = "wqqKJEr8J!mQ5m3"
 
         client = Market(url='https://api-futures.kucoin.com')
         # function for create connection to account
