@@ -97,17 +97,12 @@ def usdt_to_lot(client, pair, lev, usdt):
     return int(lotQnt)
 
 
-def import_wrapper(exchange: str):
-    module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
-    return getattr(module, f"{exchange.capitalize()}")
-
-
 def main():
     try:
         arguments = sys.argv[1:]
         session = Parser().parse(arguments)
-        Exchange = import_wrapper(session["exchange"])
-        exchange = Exchange(session)
+        pdb.set_trace()
+        api = Adapter(session["api"])
 
         with open("/var/www/webhook/event.txt", "r") as file:
             event = file.read()

@@ -40,8 +40,9 @@ class Parser:
             session = Session()
             self._validate(options, session)
             session.update(self._get_configs(options))
+            self._set_api(session)
             return session
-            
+
         except getopt.GetoptError as error:
             raise error
         except (BadArgumentNumber, BadArgumentType) as error:
@@ -83,3 +84,11 @@ class Parser:
         for key, value in section:
             configs[key] = value
         return configs
+
+    def _set_api(self, session: Type[Session]):
+        cls = self.import_wrapper(session["exchange"])
+        session["api"] = cls
+
+    def import_wrapper(self, exchange: str):
+        module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
+        return getattr(module, f"{exchange.capitalize()}")

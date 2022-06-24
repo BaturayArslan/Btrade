@@ -19,3 +19,6 @@ class Session:
 
     def __getitem__(self, item):
         return self._options[item]
+
+    def __setitem__(self, key, value):
+        self._options[key] = value
