@@ -13,6 +13,8 @@ from kucoin_futures.client import User
 from time import sleep
 from console.clparser import Parser
 import warnings
+from adapter import Adapter
+from typing import Type
 
 
 def connection(key, secret, passphrase, user=False):
@@ -101,18 +103,12 @@ def main():
     try:
         arguments = sys.argv[1:]
         session = Parser().parse(arguments)
-        pdb.set_trace()
-        api = Adapter(session["api"])
+        api: Type[Adapter] = Adapter(session["api"])
 
         with open("/var/www/webhook/event.txt", "r") as file:
             event = file.read()
         event = json.loads(event)
 
-        client = Market(url='https://api-futures.kucoin.com')
-        # function for create connection to account
-        t_client = connection(key, secret, passPharase)
-        u_client = connection(key, secret, passPharase, user=True)
-        usdt_to_lot(client, pair, lev, 10)
         while True:
             # Read event file for Tradingview event
             file = open("/var/www/webhook/event.txt", "r")
@@ -126,20 +122,20 @@ def main():
             event["time"] = timestamp_to_date(event["time"])
 
             # Check Are we have a position or order
-            position = position_details(t_client, pair)
-            activeOrderCount = t_client.get_open_order_details(pair)
+            position = api.position_details()
+            activeOrderCount = api.open_order_details()
             if not(position) and activeOrderCount["openOrderBuySize"] == 0 and activeOrderCount["openOrderSellSize"] == 0:
 
                 # Controls is event come ever or new event come
                 if event and prevEvent["id"] != event["id"]:
                     # new event comes, Place an order with your hole budget
-                    budget = int(get_account_balance(u_client, "USDT"))
+                    budget = int(api.account_balance("USDT"))
                     if budget > 10:
-                        order = create_order(
-                            t_client, pair, event["type"], lev, usdt_to_lot(client, pair, lev, 10))
+                        order = api.create_order(
+                            event["type"], api.usdt_to_lot(10))
                     else:
                         order = create_order(
-                            t_client, pair, event["type"], lev, usdt_to_lot(client, pair, lev, budget))
+                            event["type"], usdt_to_lot(budget))
                     print(event)
                     print(order)
                 else:
@@ -151,18 +147,18 @@ def main():
                 unrealisedPnl = float(position["unrealisedPnlPcnt"]) * 100
                 unrealisedRoe = float(position["unrealisedRoePcnt"]) * 100
                 if unrealisedRoe > 0:
-                    if unrealisedRoe > PROFIT_TRESHHOLD:
+                    if unrealisedRoe > session["profit_trashold"]:
                         # close position
                         print("close, ", unrealisedRoe)
-                        print(close_Position(t_client, pair))
+                        print(api.close_position())
                     else:
                         # remain open
                         print("remain Open, ", unrealisedRoe)
                 elif unrealisedRoe < 0:
-                    if unrealisedRoe < STOP_TRESHHOLD:
+                    if unrealisedRoe < session["loss_trashold"]:
                         # close position
                         print("close, ", unrealisedRoe)
-                        print(close_Position(t_client, pair))
+                        print(api.close_position())
                     else:
                         # remain open
                         print("remain Open, ", unrealisedRoe)
@@ -172,7 +168,7 @@ def main():
         # function for get open position information
         # design a loop
     except Exception as e:
-        warnings.warn("Fatal exception: {}".format(str(e)))
+        print(e)
 
 
 main()

@@ -2,6 +2,7 @@ from kucoin_futures.client import Market
 from kucoin_futures.client import Trade
 from kucoin_futures.client import User
 from datetime import datetime
+from adapter import Adapter
 
 
 class Kucoin:
@@ -16,6 +17,7 @@ class Kucoin:
     def get_avaible_symbols(self):
         return self.market_client.get_contracts_list()
 
+    @Adapter.position_details_marker
     def position_details(self):
         try:
             position = self.trade_client.get_position_details(
@@ -27,6 +29,7 @@ class Kucoin:
         except Exception as a:
             print("Pozisyon Detayi getirilemedi: ", a)
 
+    @Adapter.close_position_marker
     def close_position(self):
         try:
             return self.trade_client.create_market_order(self.data["pair"], "", "", closeOrder=True)
@@ -47,6 +50,7 @@ class Kucoin:
 # returns something like {'orderId': '6282767ff1ee30000162e981'}
 
 
+    @Adapter.create_order_marker
     def create_order(self, type, amount):
         try:
             order = self.trade_client.create_market_order(
@@ -55,6 +59,7 @@ class Kucoin:
         except Exception as a:
             print("Pozisyon yaratilamadi", a)
 
+    @Adapter.order_details_marker
     def get_order_detail(self, order):
         return self.trade_client.get_order_details(order)
 
@@ -64,12 +69,17 @@ class Kucoin:
     def history_order_list(self):
         pass
 
+    @Adapter.account_balance_marker
     def get_account_balance(self, symbol):
         try:
             overview = self.user_client.get_account_overview(symbol)
             return overview["accountEquity"]
         except Exception as a:
             print("Hesap balance alinamadi, ", a)
+
+    @Adapter.open_order_details_marker
+    def open_order_details(self):
+        return self.trade_client.get_open_order_details(self.data["pair"])
 
     @staticmethod
     def timestamp_to_date(timestamp):

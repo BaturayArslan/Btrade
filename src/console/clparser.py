@@ -87,7 +87,8 @@ class Parser:
 
     def _set_api(self, session: Type[Session]):
         cls = self.import_wrapper(session["exchange"])
-        session["api"] = cls
+        obj = cls(session)
+        session["api"] = obj
 
     def import_wrapper(self, exchange: str):
         module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
