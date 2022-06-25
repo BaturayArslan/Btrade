@@ -20,6 +20,7 @@ from requests import options
 from exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath, MissingArgument
 from session import Session
 from facade import Facade
+from adapter import Adapter
 
 
 ACCEPTED_SHORT_OPTIONS = "hl:p:s:e:f:"
@@ -88,7 +89,7 @@ class Parser:
     def _set_api(self, session: Type[Session]):
         cls = self.import_wrapper(session["exchange"])
         obj = cls(session)
-        session["api"] = obj
+        session["api"] = Adapter(obj)
 
     def import_wrapper(self, exchange: str):
         module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
