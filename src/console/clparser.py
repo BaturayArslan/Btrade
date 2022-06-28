@@ -53,10 +53,13 @@ class Parser:
 
     def _validate(self, options: List[Tuple[str, Union[str, int]]], session: Dict) -> None:
         new_options = {}
-        for option, value in options:
-            if not option:
-                raise EmptyArgument("You have entered one argument empty.")
-            try:
+        try:
+            if not len(options) == 6:
+                raise BadArgumentNumber(
+                    "You Have entered wrong number of argument.")
+            for option, value in options:
+                if not value:
+                    raise EmptyArgument("You have entered empty argument.")
                 if option == "-p":
                     new_options["profit_trashold"] = int(value)
                 elif option == "-s":
@@ -71,8 +74,13 @@ class Parser:
                     else:
                         raise BadArgumentValue(
                             "You Have Entered Bad Unacceptable Argment value.")
-            except Exception as e:
-                raise e
+        except ValueError as e:
+            self.show_usage()
+            raise BadArgumentType("Type Error. Wrong argument type.")
+        except Exception as e:
+            self.show_usage()
+            raise e
+
         session.update(new_options)
 
     def _get_configs(self, options: List[Tuple[str, Union[str, int]]]) -> Dict:
@@ -94,3 +102,6 @@ class Parser:
     def import_wrapper(self, exchange: str):
         module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
         return getattr(module, f"{exchange.capitalize()}")
+
+    def show_usage(self):
+        print("Usage")

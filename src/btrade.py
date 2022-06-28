@@ -33,7 +33,7 @@ def main():
         trade.join()
 
     except Exception as e:
-        print(e)
+        print(f"Fatal Error: {e}")
 
 
 main()
