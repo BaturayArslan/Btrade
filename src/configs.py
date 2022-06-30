@@ -1,4 +1,4 @@
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union, Dict
 from configparser import ConfigParser
 from exception import BadConfigOptions, BadFilePath
 import os
@@ -29,6 +29,8 @@ class Configs:
                 current_directory = os.getcwd()
                 absolute_path = os.path.join(current_directory, file_path)
                 self._file_path = absolute_path
+            else:
+                self._file_path = file_path
             self.read()
         else:
             raise BadFilePath("File Doesnt Exist")
@@ -53,3 +55,13 @@ class Configs:
             current_directory = os.getcwd()
             absolute_path = os.path.join(current_directory, path)
             return os.path.isfile(absolute_path)
+
+    def get_configs(self, options: List[Tuple[str, Union[str, int]]]) -> Dict:
+        file_name = [option[1] for option in options if option[0] == "-f"]
+
+        self.set_file_path(file_name[0])
+        section = self.get_section("secrets")
+        configs = {}
+        for key, value in section:
+            configs[key] = value
+        return configs

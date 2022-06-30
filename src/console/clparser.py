@@ -33,14 +33,14 @@ class Parser:
     def __init__(self) -> None:
         pass
 
-    def parse(self, arguments):
+    def parse(self, arguments) -> Type[Session]:
         try:
             options, _ = getopt.getopt(
                 arguments, ACCEPTED_SHORT_OPTIONS, ACCEPTED_LONG_OPTIONS)
-
             session = Session()
             self._validate(options, session)
-            session.update(self._get_configs(options))
+            configs = Facade().settings.get_configs(options)
+            session.update(configs)
             self._set_api(session)
             return session
 
@@ -59,7 +59,8 @@ class Parser:
                     "You Have entered wrong number of argument.")
             for option, value in options:
                 if not value:
-                    raise EmptyArgument("You have entered empty argument.")
+                    raise EmptyArgument(
+                        f"You have entered {option} argument empty.")
                 if option == "-p":
                     new_options["profit_trashold"] = int(value)
                 elif option == "-s":
@@ -83,21 +84,10 @@ class Parser:
 
         session.update(new_options)
 
-    def _get_configs(self, options: List[Tuple[str, Union[str, int]]]) -> Dict:
-        file_name = [option[1] for option in options if option[0] == "-f"]
-        if not file_name:
-            raise MissingArgument("You Have to provide -f argument.")
-        Facade().settings.set_file_path(file_name[0])
-        section = Facade().settings.get_section("secrets")
-        configs = {}
-        for key, value in section:
-            configs[key] = value
-        return configs
-
     def _set_api(self, session: Type[Session]):
         cls = self.import_wrapper(session["exchange"])
         obj = cls(session)
-        session["api"] = Adapter(obj)
+        session["api"]: Type[Adapter] = Adapter(obj)
 
     def import_wrapper(self, exchange: str):
         module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])

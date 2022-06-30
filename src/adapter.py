@@ -25,14 +25,6 @@ class BaseAdapter:
 
 
 class Adapter(BaseAdapter):
-    methods = [
-        "position_details",
-        "close_position",
-        "create_order",
-        "account_balance",
-        "order_details"
-
-    ]
 
     def __init__(self, api):
         BaseAdapter.__init__(self)
@@ -80,3 +72,6 @@ class Adapter(BaseAdapter):
 
     def __getattr__(self, attr: str):
         return getattr(self._api, attr)
+
+    def get(self):
+        return self._api

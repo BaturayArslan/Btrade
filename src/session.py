@@ -11,7 +11,8 @@ class Session:
             exchange="",
             key="",
             secret="",
-            passphrase=""
+            passphrase="",
+            api=None
         )
 
     def update(self, options):
@@ -22,3 +23,12 @@ class Session:
 
     def __setitem__(self, key, value):
         self._options[key] = value
+
+    def __getattr__(self, item):
+        try:
+            return self._options[item]
+        except KeyError:
+            raise AttributeError(item)
+
+    def get(self):
+        return self._options

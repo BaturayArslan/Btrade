@@ -27,7 +27,7 @@ class Kucoin:
             else:
                 return None
         except Exception as a:
-            print("Pozisyon Detayi getirilemedi: ", a)
+            raise Exception(f"Pozisyon Detayi getirilemedi :: {str(a)}")
 
     @Adapter.close_position_marker
     def close_position(self):
@@ -49,7 +49,6 @@ class Kucoin:
 
 # returns something like {'orderId': '6282767ff1ee30000162e981'}
 
-
     @Adapter.create_order_marker
     def create_order(self, type, amount):
         try:
@@ -57,7 +56,7 @@ class Kucoin:
                 self.data["pair"], type, self.data["leverage"], size=amount)
             return order
         except Exception as a:
-            print("Pozisyon yaratilamadi", a)
+            raise Exception(f"Pozisyon yaratilamadi :: {str(a)}")
 
     @Adapter.order_details_marker
     def get_order_detail(self, order):
@@ -73,9 +72,9 @@ class Kucoin:
     def get_account_balance(self, symbol):
         try:
             overview = self.user_client.get_account_overview(symbol)
-            return overview["accountEquity"]
+            return int(overview["accountEquity"])
         except Exception as a:
-            print("Hesap balance alinamadi, ", a)
+            raise Exception(f"Hesap balance alinamadi ::  {str(a)}")
 
     @Adapter.open_order_details_marker
     def open_order_details(self):
@@ -90,4 +89,8 @@ class Kucoin:
             self.data["pair"])
         lotPrice = markPrice["value"] / 1000
         lotQnt = (usdt * self.data["leverage"]) / lotPrice
+        lotQnt = int(lotQnt)
+        if lotQnt == 0 or lotPrice < 0:
+            raise Exception(
+                "You tried to open position with too low quantity please add more dolar.")
         return int(lotQnt)
