@@ -1,7 +1,5 @@
 from ctypes import Union
 import getopt
-import sys
-import os
 from typing import (
     List,
     Any,
@@ -12,11 +10,6 @@ from typing import (
     Dict,
     Union
 )
-import pdb
-import warnings
-from collections import defaultdict
-
-from requests import options
 from exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath, MissingArgument
 from session import Session
 from facade import Facade

@@ -1,7 +1,5 @@
-import queue
 from watchdog.events import FileSystemEventHandler
 import json
-from datetime import datetime
 from queue import Queue
 from typing import Type, Optional, Dict
 

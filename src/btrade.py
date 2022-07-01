@@ -1,13 +1,5 @@
-# https://pypi.org/project/pandas/
-import pdb
-from shutil import ExecError
 import sys
-import json
-from datetime import datetime
-from time import sleep
 from console.clparser import Parser
-from adapter import Adapter
-from typing import Type
 from watchdog.observers import Observer
 from eventhandler import MyEventHandler
 from trade import Trade
