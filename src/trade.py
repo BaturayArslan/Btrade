@@ -1,9 +1,6 @@
-from re import A
 from threading import Thread
 from typing import Type
 from queue import Queue
-
-from numpy import negative
 from session import Session
 from adapter import Adapter
 from time import sleep
@@ -11,17 +8,17 @@ from time import sleep
 
 class Trade(Thread):
 
-    def __init__(self, que: Type[Queue], session: Type[Session]):
+    def __init__(self, que: Type[Queue], session: Type[Session], is_testing=False):
         self.que = que
         self.api: Type[Adapter] = session["api"]
         self.session = session
+        self.is_testing = is_testing
 
         Thread.__init__(self)
         self.setName("Trade")
 
     def run(self) -> None:
         while True:
-
             # Check Are we have a position or order
             position = self.api.position_details()
             activeOrderCount = self.api.open_order_details()
@@ -39,7 +36,7 @@ class Trade(Thread):
                 print(order)
                 print(event)
             else:
-                # we are in a position check position status
+                # we are in a position, check position status
                 unrealisedPnl = float(position["unrealisedPnlPcnt"]) * 100
                 unrealisedRoe = float(position["unrealisedRoePcnt"]) * 100
                 if unrealisedRoe > 0:
@@ -59,3 +56,6 @@ class Trade(Thread):
                         # remain open
                         print("remain Open, ", unrealisedRoe)
                 sleep(1)
+
+            if self.is_testing:
+                break

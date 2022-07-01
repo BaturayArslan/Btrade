@@ -24,9 +24,11 @@ def main():
         event_handler = MyEventHandler(que)
         observer = Observer()
         observer.schedule(event_handler, "/var/www/webhook/event.txt")
+        observer.daemon = True
         observer.start()
 
         trade = Trade(que, session)
+        trade.daemon = True
         trade.start()
 
         observer.join()
