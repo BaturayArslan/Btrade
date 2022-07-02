@@ -1,5 +1,7 @@
 from ctypes import Union
 import getopt
+import sys
+from operator import length_hint
 from typing import (
     List,
     Any,
@@ -17,7 +19,7 @@ from adapter import Adapter
 
 
 ACCEPTED_SHORT_OPTIONS = "hl:p:s:e:f:"
-ACCEPTED_LONG_OPTIONS = ["pair="]
+ACCEPTED_LONG_OPTIONS = ["pair=", "help"]
 ACCEPTED_EXCHANGES = ["kucoin", "binance"]
 
 
@@ -30,6 +32,8 @@ class Parser:
         try:
             options, _ = getopt.getopt(
                 arguments, ACCEPTED_SHORT_OPTIONS, ACCEPTED_LONG_OPTIONS)
+            self.show_help(arguments)
+
             session = Session()
             self._validate(options, session)
             configs = Facade().settings.get_configs(options)
@@ -37,10 +41,6 @@ class Parser:
             self._set_api(session)
             return session
 
-        except getopt.GetoptError as error:
-            raise error
-        except (BadArgumentNumber, BadArgumentType) as error:
-            raise error
         except Exception as error:
             raise error
 
@@ -87,4 +87,23 @@ class Parser:
         return getattr(module, f"{exchange.capitalize()}")
 
     def show_usage(self):
-        print("Usage")
+        print(
+            "Usage:: python3 ./btrade -l 10 -p 30 -s 15 -e kucoin --pair 'XBTUSDM' -f ./config.ini")
+
+    def show_banner(self):
+        banner = '''*****************************************************
+* Btrade - Automation For Future Trading{allign: <{width}} *
+* Created By Baturay Arslan{allign: <{width2}} * 
+*****************************************************
+        '''.format(width=11, allign=" ", width2=24)
+        print(banner)
+
+    def show_options(self):
+        pass
+
+    def show_help(self, options: List[str]) -> None:
+        if "-h" in options or "--help" in options:
+            self.show_banner()
+            self.show_usage()
+            self.show_options()
+            sys.exit(-1)

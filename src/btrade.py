@@ -4,6 +4,7 @@ from watchdog.observers import Observer
 from eventhandler import MyEventHandler
 from trade import Trade
 from queue import Queue
+from facade import Facade
 
 
 def main():
@@ -15,12 +16,11 @@ def main():
 
         event_handler = MyEventHandler(que)
         observer = Observer()
+        Facade().observer_thread = observer
         observer.schedule(event_handler, "/var/www/webhook/event.txt")
-        observer.daemon = True
         observer.start()
 
         trade = Trade(que, session)
-        trade.daemon = True
         trade.start()
 
         observer.join()

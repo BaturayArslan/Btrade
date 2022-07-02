@@ -1,5 +1,6 @@
 from configs import Configs
-from typing import Type
+from typing import Type, Optional
+from watchdog.observers import Observer
 
 
 class Singleton(type):
@@ -16,3 +17,4 @@ class Facade(metaclass=Singleton):
 
     def __init__(self):
         self.settings: Type[Configs] = Configs()
+        self.observer_thread: Optional[Observer] = None
