@@ -1,5 +1,3 @@
-import pdb
-
 
 class BaseAdapter:
     def __init__(self):

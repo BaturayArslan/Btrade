@@ -1,6 +1,6 @@
 from typing import List, Tuple, Optional, Union, Dict
 from configparser import ConfigParser
-from exception import BadConfigOptions, BadFilePath
+from .exception import BadConfigOptions, BadFilePath
 import os
 
 ACCEPTED_CONFİG_FILE = {"secrets": ["key", "passphrase", "secret"]}

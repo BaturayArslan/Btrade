@@ -1,10 +1,10 @@
 import sys
-from console.clparser import Parser
+from .console.clparser import Parser
 from watchdog.observers import Observer
-from eventhandler import MyEventHandler
-from trade import Trade
+from .eventhandler import MyEventHandler
+from .trade import Trade
 from queue import Queue
-from facade import Facade
+from .facade import Facade
 
 
 def main():
@@ -18,9 +18,11 @@ def main():
         observer = Observer()
         Facade().observer_thread = observer
         observer.schedule(event_handler, "/var/www/webhook/event.txt")
+        observer.daemon = True
         observer.start()
 
         trade = Trade(que, session)
+        observer.daemon = True
         trade.start()
 
         observer.join()
@@ -28,6 +30,3 @@ def main():
 
     except Exception as e:
         print(f"Fatal Error: {e}")
-
-
-main()

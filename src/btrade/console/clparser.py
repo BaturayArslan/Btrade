@@ -12,10 +12,10 @@ from typing import (
     Dict,
     Union
 )
-from exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath, MissingArgument
-from session import Session
-from facade import Facade
-from adapter import Adapter
+from ..exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath, MissingArgument
+from ..session import Session
+from ..facade import Facade
+from ..adapter import Adapter
 
 
 ACCEPTED_SHORT_OPTIONS = "hl:p:s:e:f:"
@@ -88,7 +88,7 @@ class Parser:
 
     def show_usage(self):
         print(
-            "Usage:: python3 ./btrade -l 10 -p 30 -s 15 -e kucoin --pair 'XBTUSDM' -f ./config.ini")
+            "Usage:: btrade -l 10 -p 30 -s 15 -e kucoin --pair 'XBTUSDM' -f ./config.ini")
 
     def show_banner(self):
         banner = '''*****************************************************

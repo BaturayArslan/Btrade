@@ -2,7 +2,7 @@ from kucoin_futures.client import Market
 from kucoin_futures.client import Trade
 from kucoin_futures.client import User
 from datetime import datetime
-from adapter import Adapter
+from ..adapter import Adapter
 
 
 class Kucoin:

@@ -1,4 +1,4 @@
-from configs import Configs
+from .configs import Configs
 from typing import Type, Optional
 from watchdog.observers import Observer
 

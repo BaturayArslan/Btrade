@@ -3,10 +3,10 @@ import threading
 import traceback
 from typing import Type
 from queue import Queue
-from session import Session
-from adapter import Adapter
+from .session import Session
+from .adapter import Adapter
 from time import sleep
-from facade import Facade
+from .facade import Facade
 
 
 class Trade(Thread):
