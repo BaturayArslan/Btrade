@@ -28,7 +28,7 @@ class Trade(Thread):
                 position = self.api.position_details()
                 activeOrderCount = self.api.open_order_details()
                 if not(position) and activeOrderCount["openOrderBuySize"] == 0 and activeOrderCount["openOrderSellSize"] == 0:
-
+                    print("Waiting for Signal.")
                     event = self.que.get()
                     # new event comes, Place an order with your hole budget
                     budget = int(self.api.account_balance("USDT"))
@@ -60,7 +60,7 @@ class Trade(Thread):
                         else:
                             # remain open
                             print("remain Open, ", unrealisedRoe)
-                    sleep(1)
+                sleep(3)
 
                 if self.is_testing:
                     break

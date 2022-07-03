@@ -2,6 +2,7 @@ from watchdog.events import FileSystemEventHandler
 import json
 from queue import Queue
 from typing import Type, Optional, Dict
+from time import sleep
 
 
 class MyEventHandler(FileSystemEventHandler):
@@ -13,9 +14,9 @@ class MyEventHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         if not event.is_directory:
+            sleep(1)
             self.read_json(event.src_path)
             self.que.put(self._event)
-            print("hello")
 
     def read_json(self, path):
         with open(path, "r") as file:

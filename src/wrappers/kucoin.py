@@ -20,6 +20,7 @@ class Kucoin:
     @Adapter.position_details_marker
     def position_details(self):
         try:
+
             position = self.trade_client.get_position_details(
                 self.data["pair"])
             if position["currentQty"] != 0:
@@ -90,7 +91,8 @@ class Kucoin:
         lotPrice = markPrice["value"] / 1000
         lotQnt = (usdt * self.data["leverage"]) / lotPrice
         lotQnt = int(lotQnt)
+
         if lotQnt == 0 or lotPrice < 0:
             raise Exception(
                 "You tried to open position with too low quantity please add more dolar.")
-        return int(lotQnt)
+        return lotQnt
