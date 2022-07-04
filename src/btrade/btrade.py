@@ -22,7 +22,7 @@ def main():
         observer.start()
 
         trade = Trade(que, session)
-        observer.daemon = True
+        trade.daemon = True
         trade.start()
 
         observer.join()

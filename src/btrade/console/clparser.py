@@ -1,6 +1,7 @@
 from ctypes import Union
 import getopt
 import sys
+from importlib import import_module
 from operator import length_hint
 from typing import (
     List,
@@ -12,11 +13,12 @@ from typing import (
     Dict,
     Union
 )
+
 from ..exception import BadArgumentNumber, EmptyArgument, BadArgumentType, BadArgumentValue, BadFilePath, MissingArgument
 from ..session import Session
 from ..facade import Facade
 from ..adapter import Adapter
-
+from .. import wrappers
 
 ACCEPTED_SHORT_OPTIONS = "hl:p:s:e:f:"
 ACCEPTED_LONG_OPTIONS = ["pair=", "help"]
@@ -83,7 +85,7 @@ class Parser:
         session["api"]: Type[Adapter] = Adapter(obj)
 
     def import_wrapper(self, exchange: str):
-        module = __import__(f"wrappers.{exchange.lower()}", fromlist=[None])
+        module = import_module(f".wrappers.{exchange.lower()}", "btrade")
         return getattr(module, f"{exchange.capitalize()}")
 
     def show_usage(self):
